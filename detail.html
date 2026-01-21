@@ -31,13 +31,13 @@
         .thumb-item.active { opacity: 1; border-color: #2980b9; }
         .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 매물 기본 정보 (가격 등) */
+        /* 매물 기본 정보 */
         .basic-info { padding: 30px 20px; border-bottom: 8px solid #f5f7fa; }
         .cat-tag { color: #2980b9; font-weight: 700; font-size: 0.9rem; margin-bottom: 5px; display: block; }
         .price-text { font-size: 2rem; font-weight: 900; color: #222; margin-bottom: 10px; line-height: 1.2; }
         .title-text { font-size: 1.3rem; font-weight: 500; color: #444; margin-bottom: 20px; }
         
-        /* [핵심] 아이콘 그리드 정보 (네모 스타일) */
+        /* 아이콘 그리드 정보 */
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f9f9f9; padding: 20px; border-radius: 12px; }
         .info-item { display: flex; align-items: center; gap: 12px; }
         .info-icon { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #777; border: 1px solid #eee; font-size: 1.1rem; flex-shrink: 0; }
@@ -67,7 +67,7 @@
         .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 10px 20px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); display: flex; gap: 10px; z-index: 2000; }
         .btn-action { flex: 1; height: 50px; border-radius: 8px; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; }
         .btn-call { background: #2980b9; color: white; }
-        .btn-blog { background: #03c75a; color: white; } /* 네이버 녹색 */
+        .btn-blog { background: #03c75a; color: white; } 
         
         .loading { text-align: center; padding: 100px; color: #999; }
     </style>
@@ -82,19 +82,23 @@
         <div class="loading">매물 정보를 불러오는 중입니다...</div>
     </div>
 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNWJZWGNM"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0WNWJZWGNM');
+    </script>
+
     <script>
         // ==========================================
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSj9TOA__l0xoYFmfSGDJ8pfDzsGso0Iisub8EjjyGUaQJUaNIjVMp8qcWr6YIUxhuCU7Hj2EEBw31D/pub?output=csv'; 
         // ==========================================
 
-        // [중요] 네이버 블로그 링크 강제 연결 함수
         function fixUrl(url) {
             if (!url) return '';
             let fixed = url.trim();
-            // http가 없으면 붙여줌 (이것 때문에 연결이 안 됐던 겁니다!)
-            if (!fixed.startsWith('http')) {
-                fixed = 'https://' + fixed;
-            }
+            if (!fixed.startsWith('http')) fixed = 'https://' + fixed;
             return fixed;
         }
 
@@ -158,19 +162,25 @@
                 return;
             }
 
-            // 이미지 처리
             let imageList = item.images ? item.images.split('|').map(l=>convertDriveLink(l.trim())) : ['bg.jpg'];
             let thumbsHtml = '';
             imageList.forEach((url, idx) => {
                 thumbsHtml += `<div class="thumb-item ${idx===0?'active':''}" onclick="changeMainImage('${url}', this)"><img src="${url}"></div>`;
             });
 
-            // 네이버 블로그 링크 처리 (안전장치 적용)
             const blogUrl = fixUrl(item.blog_url);
             const blogBtn = blogUrl ? `<a href="${blogUrl}" target="_blank" class="btn-action btn-blog"><i class="fa-solid fa-blog"></i> &nbsp;블로그 보기</a>` : '';
 
-            // 비슷한 매물 추천 (같은 카테고리 3개)
-            const similarItems = allListings.filter(l => l.category === item.category && l.title !== item.title).slice(0, 5);
+            // [수정된 추천 로직] 같은 카테고리이면서, 같은 상태(임대/매매)인 것을 우선 추천
+            let similarItems = allListings.filter(l => l.category === item.category && l.title !== item.title);
+            
+            // 1차 필터: status(임대/매매)가 같은 것 우선
+            const sameStatusItems = similarItems.filter(l => l.status === item.status);
+            const otherItems = similarItems.filter(l => l.status !== item.status);
+            
+            // 합쳐서 최대 5개 자르기 (같은 상태인 것 먼저 보여줌)
+            similarItems = [...sameStatusItems, ...otherItems].slice(0, 5);
+
             let similarHtml = '';
             similarItems.forEach(sim => {
                 similarHtml += `
@@ -183,6 +193,9 @@
                     </div>
                 `;
             });
+
+            // 지도 주소 (주소가 없으면 기본값)
+            const mapQuery = item.info_loc ? item.info_loc : '세종특별자치시 찬스부동산';
 
             const html = `
                 <div class="image-section">
@@ -236,8 +249,8 @@
                 <div class="section">
                     <div class="sec-title">위치 정보</div>
                     <div class="map-box">
-                        <span class="address-text"><i class="fa-solid fa-location-dot" style="color:#e74c3c;"></i> ${item.info_loc || '세종특별자치시'}</span>
-                        <a href="https://map.naver.com/v5/search/${encodeURIComponent(item.info_loc || '세종시 찬스부동산')}" target="_blank" class="btn-map">
+                        <span class="address-text"><i class="fa-solid fa-location-dot" style="color:#e74c3c;"></i> ${item.info_loc || '세종특별자치시 (상세 주소 문의)'}</span>
+                        <a href="https://map.naver.com/v5/search/${encodeURIComponent(mapQuery)}" target="_blank" class="btn-map">
                             네이버 지도로 보기 >
                         </a>
                     </div>
@@ -245,7 +258,7 @@
 
                 ${similarItems.length > 0 ? `
                 <div class="section" style="border:none;">
-                    <div class="sec-title">이런 매물은 어때요?</div>
+                    <div class="sec-title">고객님이 찾으시는 비슷한 조건의 매물</div>
                     <div class="similar-list">${similarHtml}</div>
                 </div>` : ''}
 
