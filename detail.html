@@ -8,20 +8,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* [스타일] 네모 앱 스타일 적용 */
+        /* 스타일은 그대로 유지 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Noto Sans KR', sans-serif; color: #333; line-height: 1.6; background-color: #f5f7fa; padding-bottom: 80px; }
         a { text-decoration: none; color: inherit; }
         
-        /* 헤더 */
         header { background: white; padding: 15px 5%; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
         .logo img { height: 45px; }
         .btn-back { font-weight: 700; color: #555; border: 1px solid #ddd; padding: 5px 12px; border-radius: 4px; background: white; }
 
-        /* 메인 컨테이너 */
         .container { max-width: 800px; margin: 0 auto; background: white; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.03); }
 
-        /* 이미지 갤러리 */
         .image-section { position: relative; background: #eee; height: 400px; overflow: hidden; }
         .main-img { width: 100%; height: 100%; object-fit: cover; }
         .img-badge { position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 4px; font-weight: 700; font-size: 0.8rem; }
@@ -31,20 +28,17 @@
         .thumb-item.active { opacity: 1; border-color: #2980b9; }
         .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 매물 기본 정보 */
         .basic-info { padding: 30px 20px; border-bottom: 8px solid #f5f7fa; }
         .cat-tag { color: #2980b9; font-weight: 700; font-size: 0.9rem; margin-bottom: 5px; display: block; }
         .price-text { font-size: 2rem; font-weight: 900; color: #222; margin-bottom: 10px; line-height: 1.2; }
         .title-text { font-size: 1.3rem; font-weight: 500; color: #444; margin-bottom: 20px; }
         
-        /* 아이콘 그리드 정보 */
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f9f9f9; padding: 20px; border-radius: 12px; }
         .info-item { display: flex; align-items: center; gap: 12px; }
         .info-icon { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #777; border: 1px solid #eee; font-size: 1.1rem; flex-shrink: 0; }
         .info-text div:first-child { font-size: 0.8rem; color: #888; margin-bottom: 2px; }
         .info-text div:last-child { font-size: 0.95rem; font-weight: 700; color: #333; }
 
-        /* 상세 설명 & 위치 */
         .section { padding: 30px 20px; border-bottom: 8px solid #f5f7fa; }
         .sec-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 15px; color: #222; display: flex; align-items: center; gap: 8px; }
         
@@ -54,7 +48,6 @@
         .address-text { font-weight: 700; font-size: 1.1rem; margin-bottom: 15px; display: block; }
         .btn-map { background: #2c3e50; color: white; padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; }
 
-        /* 비슷한 매물 추천 */
         .similar-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; }
         .similar-card { min-width: 160px; width: 160px; border: 1px solid #eee; border-radius: 8px; overflow: hidden; cursor: pointer; }
         .similar-img { height: 100px; background: #ddd; }
@@ -63,7 +56,6 @@
         .similar-price { font-weight: 800; font-size: 0.95rem; color: #2980b9; margin-bottom: 3px; }
         .similar-title { font-size: 0.85rem; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* 하단 고정 버튼 */
         .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 10px 20px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); display: flex; gap: 10px; z-index: 2000; }
         .btn-action { flex: 1; height: 50px; border-radius: 8px; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; }
         .btn-call { background: #2980b9; color: white; }
@@ -107,22 +99,41 @@
             return urlParams.get(name);
         }
 
+        // [중요] 빈칸도 정확히 읽어내는 강력한 CSV 해석기
         function csvToJSON(csv) {
             const lines = csv.split("\n");
             const result = [];
             const headers = lines[0].split(",").map(h => h.trim());
-            for(let i = 1; i < lines.length; i++) {
-                if(!lines[i]) continue;
+
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                
                 const obj = {};
-                const currentline = lines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-                if(currentline) {
-                    headers.forEach((header, j) => {
-                        let val = currentline[j] ? currentline[j].trim() : "";
-                        val = val.replace(/^"|"$/g, '').replace(/""/g, '"');
-                        obj[header] = val;
-                    });
-                    result.push(obj);
+                let row = [];
+                let current = '';
+                let inQuote = false;
+                
+                // 한 글자씩 분석해서 쉼표와 따옴표를 정확히 구분
+                for (let char of lines[i]) {
+                    if (char === '"') {
+                        inQuote = !inQuote;
+                    } else if (char === ',' && !inQuote) {
+                        row.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
                 }
+                row.push(current.trim()); // 마지막 칸 추가
+
+                // 헤더와 데이터 짝지어주기
+                headers.forEach((header, index) => {
+                    let val = row[index] || '';
+                    // 따옴표 제거 (엑셀이 자동으로 붙인 것들)
+                    val = val.replace(/^"|"$/g, '').replace(/""/g, '"');
+                    obj[header] = val;
+                });
+                result.push(obj);
             }
             return result;
         }
@@ -171,14 +182,10 @@
             const blogUrl = fixUrl(item.blog_url);
             const blogBtn = blogUrl ? `<a href="${blogUrl}" target="_blank" class="btn-action btn-blog"><i class="fa-solid fa-blog"></i> &nbsp;블로그 보기</a>` : '';
 
-            // [수정된 추천 로직] 같은 카테고리이면서, 같은 상태(임대/매매)인 것을 우선 추천
+            // 비슷한 매물 추천 로직
             let similarItems = allListings.filter(l => l.category === item.category && l.title !== item.title);
-            
-            // 1차 필터: status(임대/매매)가 같은 것 우선
             const sameStatusItems = similarItems.filter(l => l.status === item.status);
             const otherItems = similarItems.filter(l => l.status !== item.status);
-            
-            // 합쳐서 최대 5개 자르기 (같은 상태인 것 먼저 보여줌)
             similarItems = [...sameStatusItems, ...otherItems].slice(0, 5);
 
             let similarHtml = '';
@@ -194,7 +201,7 @@
                 `;
             });
 
-            // 지도 주소 (주소가 없으면 기본값)
+            // 지도 검색어 설정 (주소 값이 있으면 사용, 없으면 기본값)
             const mapQuery = item.info_loc ? item.info_loc : '세종특별자치시 찬스부동산';
 
             const html = `
