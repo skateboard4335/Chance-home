@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>매물 상세 정보 - 찬스부동산</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* 공통 스타일 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans KR', sans-serif; color: #333; line-height: 1.6; background-color: #fcfcfc; }
+        a { text-decoration: none; color: inherit; }
+        :root { --chance-blue: #2980b9; --chance-dark: #2c3e50; }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 5%; border-bottom: 1px solid #eee;
+            background-color: white;
+        }
+        .logo img { height: 50px; width: auto; }
+        .btn-back { padding: 8px 15px; border: 1px solid #ddd; border-radius: 5px; font-weight: 700; }
+
+        /* 상세 페이지 레이아웃 */
+        .detail-container { max-width: 1000px; margin: 40px auto; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+
+        /* [업그레이드] 이미지 갤러리 스타일 */
+        .gallery-container { margin-bottom: 30px; }
+        .main-image-box { 
+            width: 100%; height: 500px; /* 높이 고정 */
+            background: #eee; border-radius: 10px; overflow: hidden; margin-bottom: 10px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .main-image-box img { 
+            max-width: 100%; max-height: 100%; /* 부모 박스 안에서 비율 유지하며 꽉 차게 */
+            object-fit: contain; /* 이미지가 잘리지 않게 함 (꽉 채우려면 cover로 변경) */
+        }
+        .thumbnail-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
+        .thumb-box { 
+            width: 80px; height: 60px; flex-shrink: 0; border-radius: 5px; overflow: hidden; opacity: 0.6; cursor: pointer; transition: 0.3s; border: 2px solid transparent;
+        }
+        .thumb-box:hover, .thumb-box.active { opacity: 1; border-color: var(--chance-blue); }
+        .thumb-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 기본 정보 */
+        .detail-header { border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 30px; }
+        .detail-status-badge { display: inline-block; padding: 5px 12px; background: var(--chance-dark); color: white; border-radius: 20px; font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; }
+        .detail-price { font-size: 2rem; font-weight: 900; color: var(--chance-blue); margin-bottom: 5px; }
+        .detail-title { font-size: 1.8rem; font-weight: 700; line-height: 1.3; }
+
+        /* [업그레이드] 상세 정보 테이블 스타일 */
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 1.05rem; }
+        .info-table th { 
+            width: 25%; background: #f8f9fa; text-align: left; padding: 15px; 
+            border-top: 1px solid #eee; border-bottom: 1px solid #eee; color: #555; font-weight: 700;
+        }
+        .info-table td { 
+            width: 75%; padding: 15px; border-top: 1px solid #eee; border-bottom: 1px solid #eee; color: #222; font-weight: 500;
+        }
+        
+        /* 상세 설명 박스 */
+        .desc-box { background: #fcfcfc; padding: 30px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 30px; }
+        .desc-box h3 { font-size: 1.3rem; margin-bottom: 20px; border-bottom: 2px solid var(--chance-blue); display: inline-block; padding-bottom: 5px; }
+        .detail-desc { font-size: 1.1rem; line-height: 1.8; color: #444; white-space: pre-wrap; }
+        
+        /* 하단 버튼 */
+        .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 40px; }
+        .btn-action { flex: 1; padding: 18px; text-align: center; border-radius: 10px; font-weight: 700; font-size: 1.2rem; cursor: pointer; transition: 0.3s; }
+        .btn-blog { background-color: #03c75a; color: white; border: none; }
+        .btn-blog:hover { background-color: #02b351; }
+        .btn-call { background-color: var(--chance-blue); color: white; border: none; }
+        .btn-call:hover { background-color: #1c6ea4; }
+
+        .loading-msg { text-align: center; padding: 100px; color: #999; font-size: 1.2rem; }
+
+        /* 모바일 대응 */
+        @media (max-width: 768px) {
+            .main-image-box { height: 300px; }
+            .info-table th, .info-table td { display: block; width: 100%; border: none; padding: 10px 0; }
+            .info-table th { background: transparent; color: #888; font-size: 0.9rem; margin-top: 10px; }
+            .info-table td { border-bottom: 1px solid #eee; font-weight: 700; padding-bottom: 15px; }
+            .action-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><a href="index.html"><img src="logo.jpg" alt="찬스부동산"></a></div>
+        <a href="listings.html" class="btn-back">← 목록으로</a>
+    </header>
+
+    <div id="detail-content" class="detail-container">
+        <div class="loading-msg">매물 정보를 불러오는 중입니다...</div>
+    </div>
+
+    <script>
+        // ==========================================
+        // [설정] 사장님의 구글 시트 링크
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSj9TOA__l0xoYFmfSGDJ8pfDzsGso0Iisub8EjjyGUaQJUaNIjVMp8qcWr6YIUxhuCU7Hj2EEBw31D/pub?output=csv'; 
+        // ==========================================
+
+        function getParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        function csvToJSON(csv) {
+            const lines = csv.split("\n");
+            const result = [];
+            const headers = lines[0].split(",").map(h => h.trim());
+            for(let i = 1; i < lines.length; i++) {
+                if(!lines[i]) continue;
+                const obj = {};
+                const currentline = lines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+                if(currentline) {
+                    headers.forEach((header, j) => {
+                        let val = currentline[j] ? currentline[j].trim() : "";
+                        val = val.replace(/^"|"$/g, '').replace(/""/g, '"');
+                        obj[header] = val;
+                    });
+                    result.push(obj);
+                }
+            }
+            return result;
+        }
+
+        function convertDriveLink(link) {
+            if (!link) return 'bg.jpg';
+            if (link.includes('drive.google.com')) {
+                const idMatch = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (idMatch && idMatch[1]) return `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w1000`;
+            }
+            return link; 
+        }
+
+        // 썸네일 클릭 시 메인 이미지 변경 함수
+        function changeMainImage(url, element) {
+            document.getElementById('main-img').src = url;
+            document.querySelectorAll('.thumb-box').forEach(box => box.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        const targetTitle = getParam('title');
+
+        fetch(sheetUrl + '&t=' + new Date().getTime())
+            .then(response => response.text())
+            .then(csvText => {
+                const allListings = csvToJSON(csvText);
+                const item = allListings.find(l => l.title === targetTitle);
+                renderDetail(item);
+            })
+            .catch(error => {
+                console.error(error);
+                document.getElementById('detail-content').innerHTML = '<div class="loading-msg">정보를 불러올 수 없습니다.</div>';
+            });
+
+        function renderDetail(item) {
+            const container = document.getElementById('detail-content');
+            if (!item) {
+                container.innerHTML = '<div class="loading-msg">삭제되거나 존재하지 않는 매물입니다.</div>';
+                return;
+            }
+
+            // [핵심] 이미지 여러 개 처리 ('|'로 분리)
+            let imageList = [];
+            if(item.images) {
+                imageList = item.images.split('|').map(link => convertDriveLink(link.trim()));
+            } else if(item.image) { // 구버전 호환
+                imageList = [convertDriveLink(item.image)];
+            } else {
+                imageList = ['bg.jpg'];
+            }
+            
+            const mainImgUrl = imageList[0];
+
+            // 썸네일 HTML 생성
+            let thumbsHtml = '';
+            if(imageList.length > 1) {
+                thumbsHtml = '<div class="thumbnail-strip">';
+                imageList.forEach((url, index) => {
+                    const activeClass = index === 0 ? 'active' : '';
+                    thumbsHtml += `
+                        <div class="thumb-box ${activeClass}" onclick="changeMainImage('${url}', this)">
+                            <img src="${url}" alt="썸네일 ${index+1}">
+                        </div>`;
+                });
+                thumbsHtml += '</div>';
+            }
+
+            const blogBtnHtml = item.blog_url ? 
+                `<button class="btn-action btn-blog" onclick="window.open('${item.blog_url}')">N 네이버 블로그로 보기</button>` : '';
+
+            container.innerHTML = `
+                <div class="gallery-container">
+                    <div class="main-image-box">
+                        <img id="main-img" src="${mainImgUrl}" alt="${item.title}">
+                    </div>
+                    ${thumbsHtml}
+                </div>
+
+                <div class="detail-header">
+                    <span class="detail-status-badge">${item.status} | ${item.category}</span>
+                    <div class="detail-price">${item.price}</div>
+                    <h1 class="detail-title">${item.title}</h1>
+                </div>
+
+                <table class="info-table">
+                    <tr>
+                        <th>위치(소재지)</th>
+                        <td>${item.info_loc || '-'}</td>
+                    </tr>
+                    <tr>
+                        <th>면적</th>
+                        <td>${item.info_area || '-'}</td>
+                    </tr>
+                    <tr>
+                        <th>임대/거래 조건</th>
+                        <td>${item.price} <br> <span style="font-size:0.9rem; color:#666;">(${item.info_price_detail || '부가세 별도'})</span></td>
+                    </tr>
+                    <tr>
+                        <th>용도 / 주차</th>
+                        <td>${item.info_use || '-'}</td>
+                    </tr>
+                    <tr>
+                        <th>특이사항 / 입주</th>
+                        <td>${item.info_etc || '-'}</td>
+                    </tr>
+                </table>
+                
+                <div class="desc-box">
+                    <h3>매물 상세 설명</h3>
+                    <div class="detail-desc">${item.description}</div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn-action btn-call" onclick="location.href='tel:044-864-4953'">📞 전화 문의하기</button>
+                    ${blogBtnHtml}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

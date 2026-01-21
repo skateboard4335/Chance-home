@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>찬스부동산 - 프리미엄 매물관</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* 스타일은 기존과 동일 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans KR', sans-serif; color: #333; line-height: 1.6; background-color: #fcfcfc; }
+        a { text-decoration: none; color: inherit; }
+        :root { --chance-blue: #2980b9; --chance-dark: #2c3e50; }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 5%; border-bottom: 1px solid #eee;
+            background-color: rgba(255, 255, 255, 0.95);
+            position: sticky; top: 0; z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .logo img { height: 60px; width: auto; } 
+        .nav-menu { display: flex; gap: 20px; font-weight: 700; font-size: 1rem; align-items: center; }
+        .nav-menu a:hover { color: var(--chance-blue); }
+        .btn-register { background-color: var(--chance-blue); color: white !important; padding: 10px 20px; border-radius: 5px; }
+
+        .listing-hero { background-color: var(--chance-dark); color: white; padding: 60px 5%; text-align: center; }
+        .listing-hero h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        
+        .filter-container { display: flex; justify-content: center; gap: 10px; padding: 30px 5%; background: white; border-bottom: 1px solid #eee; flex-wrap: wrap; }
+        .filter-btn { border: 1px solid #ddd; background: white; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: 700; color: #555; transition: 0.3s; }
+        .filter-btn:hover, .filter-btn.active { background-color: var(--chance-blue); color: white; border-color: var(--chance-blue); }
+
+        .listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 40px 5%; max-width: 1400px; margin: 0 auto; }
+        
+        /* [수정] 카드에 커서 손가락 모양 추가 */
+        .listing-card { 
+            background: white; border-radius: 12px; overflow: hidden; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; border: 1px solid #eee; 
+            display: flex; flex-direction: column; height: auto; 
+            cursor: pointer; /* 클릭 가능 표시 */
+        }
+        .listing-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        .card-image-box { position: relative; width: 100%; padding-top: 75%; overflow: hidden; background: #eee; }
+        .card-image-box img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .listing-card:hover .card-image-box img { transform: scale(1.05); }
+        .card-badge { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; font-size: 0.8rem; border-radius: 4px; font-weight: 700; }
+        .card-status { position: absolute; top: 15px; right: 15px; padding: 5px 10px; font-size: 0.8rem; border-radius: 4px; font-weight: 700; }
+        .status-sale { background: #e74c3c; color: white; }
+        .status-rent { background: #f1c40f; color: #333; }
+        .status-done { background: #95a5a6; color: white; }
+        
+        .card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-price { font-size: 1.3rem; font-weight: 900; color: var(--chance-blue); margin-bottom: 5px; }
+        .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; color: #2c3e50; line-height: 1.4; }
+        .card-desc { font-size: 0.95rem; color: #555; margin-bottom: 15px; white-space: pre-wrap; }
+        .card-footer { margin-top: auto; padding-top: 15px; border-top: 1px solid #f0f0f0; display: flex; justify-content: space-between; font-size: 0.85rem; color: #999; }
+        .loading-msg { text-align: center; grid-column: 1/-1; padding: 50px; color: #777; }
+        @media (max-width: 768px) { header { flex-direction: column; gap: 15px; } .nav-menu { flex-wrap: wrap; justify-content: center; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><a href="index.html"><img src="logo.jpg" alt="찬스부동산"></a></div>
+        <nav class="nav-menu">
+            <a href="index.html">🏠 홈으로</a>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLScsjftj28uaaFnGJbopfBkk1lZ_nl-XKub33LJqyc_Wdhy8sA/viewform" target="_blank" class="btn-register">⚡ 매물 접수</a>
+        </nav>
+    </header>
+
+    <div class="listing-hero">
+        <h1>💎 프리미엄 매물관</h1>
+        <p>찬스부동산이 엄선한 최고의 매물을 만나보세요.</p>
+    </div>
+
+    <div class="filter-container" id="category-buttons">
+        <button class="filter-btn active" onclick="filterListings('all')">전체보기</button>
+    </div>
+
+    <div class="listings-grid" id="listing-container">
+        <div class="loading-msg">매물 정보를 불러오는 중입니다...</div>
+    </div>
+
+    <script>
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSj9TOA__l0xoYFmfSGDJ8pfDzsGso0Iisub8EjjyGUaQJUaNIjVMp8qcWr6YIUxhuCU7Hj2EEBw31D/pub?output=csv'; 
+
+        let allListings = [];
+
+        function csvToJSON(csv) {
+            const lines = csv.split("\n");
+            const result = [];
+            const headers = lines[0].split(",").map(h => h.trim());
+            for(let i = 1; i < lines.length; i++) {
+                if(!lines[i]) continue;
+                const obj = {};
+                const currentline = lines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+                if(currentline) {
+                    headers.forEach((header, j) => {
+                        let val = currentline[j] ? currentline[j].trim() : "";
+                        val = val.replace(/^"|"$/g, '').replace(/""/g, '"');
+                        obj[header] = val;
+                    });
+                    result.push(obj);
+                }
+            }
+            return result;
+        }
+
+        function convertDriveLink(link) {
+            if (!link) return 'bg.jpg';
+            if (link.includes('drive.google.com')) {
+                const idMatch = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (idMatch && idMatch[1]) return `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w1000`;
+            }
+            return link; 
+        }
+
+        function createCategoryButtons(items) {
+            const categorySet = new Set();
+            items.forEach(item => {
+                if(item.category && item.category.trim() !== '') categorySet.add(item.category.trim());
+            });
+            const btnContainer = document.getElementById('category-buttons');
+            btnContainer.innerHTML = '<button class="filter-btn active" onclick="filterListings(\'all\')">전체보기</button>';
+            categorySet.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.innerText = cat;
+                btn.onclick = () => filterListings(cat);
+                btnContainer.appendChild(btn);
+            });
+        }
+
+        fetch(sheetUrl + '&t=' + new Date().getTime())
+            .then(response => response.text())
+            .then(csvText => {
+                allListings = csvToJSON(csvText);
+                createCategoryButtons(allListings); 
+                renderListings(allListings);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('listing-container').innerHTML = '<div class="loading-msg">데이터를 불러오는 중 오류가 발생했습니다.</div>';
+            });
+
+        function renderListings(items) {
+            const container = document.getElementById('listing-container');
+            container.innerHTML = '';
+            if (items.length === 0) {
+                container.innerHTML = '<div class="loading-msg">등록된 매물이 없습니다.</div>';
+                return;
+            }
+            items.forEach(item => {
+                let statusClass = 'status-sale';
+                if(item.status === '임대') statusClass = 'status-rent';
+                if(item.status === '거래완료') statusClass = 'status-done';
+                const imgUrl = convertDriveLink(item.image);
+
+                // [중요] 클릭 시 detail.html로 이동 (제목을 주소 뒤에 붙여서 보냄)
+                const html = `
+                    <div class="listing-card" onclick="location.href='detail.html?title=' + encodeURIComponent('${item.title}')">
+                        <div class="card-image-box">
+                            <img src="${imgUrl}" alt="${item.title}" onerror="this.src='bg.jpg'">
+                            <span class="card-badge">${item.category}</span>
+                            <span class="card-status ${statusClass}">${item.status}</span>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-price">${item.price}</div>
+                            <h3 class="card-title">${item.title}</h3>
+                            <p class="card-desc">${item.description}</p>
+                            <div class="card-footer">
+                                <span>📞 문의: 044-864-4953</span>
+                                <span style="color:var(--chance-blue)">더보기 ></span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function filterListings(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if(event && event.target) event.target.classList.add('active');
+            else document.querySelector('.filter-btn').classList.add('active');
+
+            if (category === 'all') renderListings(allListings);
+            else renderListings(allListings.filter(item => item.category && item.category.includes(category)));
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{\rtf1\ansi\ansicpg949\cocoartf2867
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0  backend:\
+  name: git-gateway\
+  branch: main\
+\
+media_folder: "images/uploads"\
+public_folder: "/images/uploads"\
+\
+collections:\
+  - name: "listings"\
+    label: "\uc0\u47588 \u47932  \u44288 \u47532 "\
+    files:\
+      - file: "data/listings.json"\
+        name: "listings"\
+        label: "\uc0\u51204 \u52404  \u47588 \u47932  \u47532 \u49828 \u53944 "\
+        fields:\
+          - name: "listings"\
+            label: "\uc0\u47588 \u47932  \u47785 \u47197 "\
+            widget: "list"\
+            fields:\
+              - \{label: "\uc0\u51228 \u47785  (\u50696 : \u44256 \u50868 \u46041  34\u54217  \u47196 \u50564 \u46041 )", name: "title", widget: "string"\}\
+              - \{label: "\uc0\u52852 \u53580 \u44256 \u47532 ", name: "category", widget: "select", options: ["\u50500 \u54028 \u53944 ", "\u49345 \u44032 ", "\u53664 \u51648 ", "\u44592 \u53440 "]\}\
+              - \{label: "\uc0\u44144 \u47000  \u51333 \u47448 ", name: "status", widget: "select", options: ["\u47588 \u47588 ", "\u51076 \u45824 ", "\u44144 \u47000 \u50756 \u47308 "]\}\
+              - \{label: "\uc0\u44032 \u44201  \u51333 \u47448  (\u47588 \u47588 /\u51204 \u49464  \u46321 )", name: "type", widget: "select", options: ["\u47588 \u47588 ", "\u51076 \u45824 "]\}\
+              - \{label: "\uc0\u47588 \u47588 \u44032  (\u46608 \u45716  \u51204 \u49464 \u44032 )", name: "price", widget: "string", required: false, hint: "\u47588 \u47588 \u51068  \u44221 \u50864  \u51077 \u47141  (\u50696 : 5\u50613  3\u52380 )"\}\
+              - \{label: "\uc0\u48372 \u51613 \u44552 ", name: "deposit", widget: "string", required: false, hint: "\u51076 \u45824 \u51068  \u44221 \u50864  \u51077 \u47141 "\}\
+              - \{label: "\uc0\u50900 \u49464 ", name: "rent", widget: "string", required: false, hint: "\u51076 \u45824 \u51068  \u44221 \u50864  \u51077 \u47141 "\}\
+              - \{label: "\uc0\u45824 \u54364  \u49324 \u51652 ", name: "image", widget: "image"\}\
+              - \{label: "\uc0\u49345 \u49464  \u49444 \u47749 ", name: "description", widget: "text"\}\
+}

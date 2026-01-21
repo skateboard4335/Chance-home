@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="세종시 찬스부동산. 아파트, 상가, 사무실, 토지 전문 중개. 여러분의 찬스메이커가 되겠습니다.">
+    <meta property="og:title" content="찬스부동산 - 세종시 고운뜰7길9">
+    <meta property="og:image" content="bg.jpg">
+    <title>찬스부동산 - 세종시 고운뜰7길9</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* ================= 공통 스타일 ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { font-family: 'Noto Sans KR', sans-serif; color: #333; line-height: 1.6; background-color: #fcfcfc; }
+        
+        a { text-decoration: none; color: inherit; }
+        
+        /* 포인트 컬러 */
+        :root { --chance-blue: #2980b9; --chance-dark: #2c3e50; }
+
+        /* ================= 1. 헤더 & 네비게이션 ================= */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 5%; border-bottom: 1px solid #eee;
+            background-color: rgba(255, 255, 255, 0.95);
+            position: sticky; top: 0; z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .logo img { height: 60px; width: auto; } 
+
+        .nav-menu { display: flex; gap: 20px; font-weight: 700; font-size: 1rem; align-items: center; }
+        
+        .nav-menu a { 
+            transition: color 0.3s; 
+            color: #555; 
+            display: flex; align-items: center; 
+            gap: 4px; 
+        }
+        .nav-menu a:hover { color: var(--chance-blue); }
+
+        .nav-icon { height: 20px; width: auto; vertical-align: middle; position: relative; top: -1px; }
+
+        /* [추가됨] 프리미엄 매물관 버튼 스타일 */
+        .btn-premium {
+            color: var(--chance-dark) !important;
+            border: 2px solid var(--chance-dark);
+            padding: 8px 15px; border-radius: 20px;
+        }
+        .btn-premium:hover {
+            background-color: var(--chance-dark); color: white !important;
+        }
+
+        .btn-register {
+            background-color: var(--chance-blue); color: white !important;
+            padding: 10px 20px; border-radius: 5px;
+            gap: 6px; 
+        }
+        .btn-register:hover { background-color: #1c6ea4; }
+
+        /* ================= 2. 메인 배너 ================= */
+        .hero { 
+            padding: 140px 5%;
+            background-image: linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)), url('bg.jpg');
+            background-size: cover;
+            background-position: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .hero-subtitle { color: var(--chance-blue); font-weight: 700; margin-bottom: 20px; display: block; }
+        
+        .hero h1 { font-size: 3.5rem; font-weight: 900; line-height: 1.2; margin-bottom: 30px; color: #111; }
+        .hero h1 span { color: var(--chance-blue); }
+        .hero p { font-size: 1.1rem; color: #444; max-width: 600px; margin-bottom: 0; font-weight: 500; }
+
+        /* ================= 3. 인사말 섹션 ================= */
+        .greeting-section { background-color: #fff; padding: 80px 5%; text-align: center; }
+        .greeting-box {
+            max-width: 800px; margin: 0 auto; background: white; padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            text-align: left;
+            border: 1px solid #f0f0f0;
+        }
+        .greeting-box h2 {
+            font-size: 1.8rem; margin-bottom: 20px; color: var(--chance-dark);
+            border-bottom: 3px solid var(--chance-blue); display: inline-block; padding-bottom: 10px;
+        }
+        
+        .greeting-box p { margin-bottom: 15px; color: #333; line-height: 1.8; font-size: 1.05rem; }
+        
+        .service-list { margin-top: 20px; background-color: #f8fbff; padding: 25px; border-radius: 15px; }
+        .service-list li { list-style: none; margin-bottom: 10px; font-weight: 600; color: #2c3e50; }
+        .service-list li::before { content: "✔ "; color: var(--chance-blue); margin-right: 5px;}
+
+        /* ================= 4. 서비스 카드 ================= */
+        .features { padding: 100px 5%; background-color: #f9f9f9; }
+        .scroll-reveal { opacity: 0; transform: translateY(50px); transition: all 1s ease-out; }
+        .scroll-reveal.visible { opacity: 1; transform: translateY(0); }
+        
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+        .card { 
+            padding: 40px 30px; 
+            background: white;
+            border: 1px solid #eee; border-radius: 15px; transition: 0.3s; text-align: center; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-color: var(--chance-blue); }
+        .card-icon { font-size: 3.5rem; margin-bottom: 20px; }
+        .card h3 { font-size: 1.5rem; margin-bottom: 10px; color: #2c3e50;}
+        .card p { color: #777; font-size: 0.95rem; }
+
+        /* ================= 5. 하단 푸터 ================= */
+        footer { background-color: var(--chance-dark); color: #ecf0f1; padding: 60px 5%; font-size: 0.95rem; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 40px; }
+        .footer-left h2 { font-size: 1.8rem; margin-bottom: 20px; color: white; }
+        .footer-info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px 30px; }
+        .footer-item strong { color: #bdc3c7; font-weight: 400; display: inline-block; width: 80px; }
+        .footer-item a { color: white; border-bottom: 1px dotted #7f8c8d; }
+        .copyright { margin-top: 40px; padding-top: 20px; border-top: 1px solid #34495e; color: #7f8c8d; font-size: 0.85rem; }
+
+        /* ================= 6. 우측 하단 고정 QR코드 ================= */
+        .fixed-qr {
+            position: fixed; bottom: 30px; right: 30px; z-index: 100;
+            background: white; padding: 15px; border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15); text-align: center; border: 1px solid #e0e0e0;
+        }
+        .fixed-qr img { width: 120px; height: auto; display: block; margin-bottom: 8px; }
+        .fixed-qr p { font-size: 0.9rem; color: var(--chance-dark); font-weight: 700; margin: 0; }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            header { flex-direction: column; gap: 15px; }
+            .footer-info-grid { grid-template-columns: 1fr; }
+            .fixed-qr { bottom: 10px; right: 10px; padding: 10px; }
+            .fixed-qr img { width: 90px; }
+            .nav-menu { flex-wrap: wrap; justify-content: center; }
+            /* 모바일에서 프리미엄 버튼 위치 조정 */
+            .btn-premium { order: -1; margin-bottom: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <a href="index.html"><img src="logo.jpg" alt="찬스부동산"></a>
+        </div>
+        <nav class="nav-menu">
+            <a href="listings.html" class="btn-premium">💎 프리미엄 매물관</a>
+
+            <a href="https://www.youtube.com/@이호재-u3l" target="_blank"><img src="Youtube_logo.png" alt="유튜브" class="nav-icon">유튜브</a>
+            
+            <a href="https://sp.zigbang.com/share/store/908559?userNo=&stamp=260111211445" target="_blank">
+                <img src="zigbang.png" alt="직방" class="nav-icon">직방 매물(상가, 사무실)
+            </a>
+
+            <a href="https://m.blog.naver.com/PostList.naver?blogId=chance4953&tab=1" target="_blank">
+                <img src="naverblog-logo.jpg" alt="블로그" class="nav-icon">네이버 블로그 매물
+            </a>
+
+            <a href="https://naver.me/FhfVyegj" target="_blank"><img src="navermap.webp" alt="오시는 길" class="nav-icon">오시는 길</a>
+            
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLScsjftj28uaaFnGJbopfBkk1lZ_nl-XKub33LJqyc_Wdhy8sA/viewform?usp=header" target="_blank" class="btn-register">⚡ 매물 접수</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <span class="hero-subtitle">▶ Chance: 어떤 일을 하는 데에 가장 좋은 시기나 경우</span>
+        <h1>행복도시 세종,<br>여러분들의 <span>찬스메이커</span>가<br>되겠습니다.</h1>
+        <p>찬스부동산은 단순한 중개를 넘어 여러분의 일상이 행복해질 수 있도록 최고의 기회를 만들어 드립니다. 세종시에서의 새로운 시작, 저희와 함께하세요.</p>
+    </section>
+
+    <section class="greeting-section">
+        <div class="greeting-box">
+            <h2>안녕하세요, 찬스부동산입니다.</h2>
+            
+            <p>
+                안녕하세요^^ 고운동에 위치한 찬스부동산입니다.<br>
+                <strong>내가 살 집, 내가 운영할 매장, 내가 일할 사무실</strong>이라는 마음으로 함께 하겠습니다.<br>
+                궁금하신 부분은 편하게 말씀주세요~
+            </p>
+
+            <p>
+                고객님의 소중한 자산, 언제나 정직하게 함께하겠습니다.<br>
+                필요하실 때 꼭 한 번 연락주세요.
+            </p>
+
+            <ul class="service-list">
+                <li>국토부 전자계약 회원업소 (편리한 계약 진행)</li>
+                <li>아파트 / 단독주택 / 오피스텔 / 원룸 (임대·매매)</li>
+                <li>상가 / 사무실 (상권분석·창업)</li>
+                <li>기존 사업장 양수도 중개</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="features scroll-reveal">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h2 style="font-size: 2rem; font-weight: 900; color: #2c3e50;">전문 중개 분야</h2>
+            <p style="color: #7f8c8d;">고객님의 소중한 자산, 전문가에게 맡기세요.</p>
+        </div>
+        
+        <div class="cards-grid">
+            <div class="card">
+                <div class="card-icon">🏠</div>
+                <h3>주거용 부동산</h3>
+                <p>아파트, 단독주택, 원룸 등<br>라이프스타일에 맞는 보금자리 추천</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🏢</div>
+                <h3>상업용 부동산</h3>
+                <p>성공 창업을 위한 상권 분석<br>상가, 사무실 임대 및 매매</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🤝</div>
+                <h3>양수도 / 권리금</h3>
+                <p>복잡한 권리 관계 분석<br>안전하고 투명한 계약 진행</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left">
+                <h2>찬스부동산공인중개사사무소</h2>
+                <div class="footer-info-grid">
+                    <div class="footer-item"><strong>대표</strong> 이 호 재</div>
+                    <div class="footer-item"><strong>등록번호</strong> 36110-2025-00048</div>
+                    <div class="footer-item"><strong>휴대전화</strong> <a href="tel:010-2357-6915">010-2357-6915</a></div>
+                    <div class="footer-item"><strong>Tel</strong> <a href="tel:044-864-4953">044. 864. 4953</a></div>
+                    <div class="footer-item"><strong>Fax</strong> 044. 864. 4958</div>
+                    <div class="footer-item"><strong>E-mail</strong> <a href="mailto:hjl6915@daum.net">hjl6915@daum.net</a></div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>주소: 세종시 고운뜰7길9 더리치빌딩 109호</p>
+            <p>
+                &copy; 2026 Chance Real Estate. All rights reserved.
+                <a href="/admin/" style="color: #555; margin-left: 10px; text-decoration: none;" title="관리자 로그인">🔒</a>
+            </p>
+        </div>
+    </footer>
+
+    <div class="fixed-qr">
+        <img src="qrcode.jpg" alt="매물 접수 QR코드">
+        <p>간편 매물 접수</p>
+    </div>
+
+    <script>
+        window.addEventListener('scroll', function() {
+            var revealElement = document.querySelector('.scroll-reveal');
+            if(revealElement) {
+                var windowHeight = window.innerHeight;
+                var elementTop = revealElement.getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    revealElement.classList.add('visible');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
