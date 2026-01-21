@@ -79,8 +79,8 @@
 
     <script>
         // ==========================================
-        // [업데이트] 사장님 스크린샷에 있는 '진짜 게시 주소'입니다!
-        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgfWKmQ-Tjpm_mMdqKcgwvfVbCJZwl_HArZF3o6ZOjdR_1Xn3xvTlr1fwDw6EiDaaRo/pub?output=csv'; 
+        // [수정완료] 사장님의 새로운 구글 시트 주소입니다.
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/1eowV-zcKf6EitkjY8WE5F3YvrES8ZKmXIGig_FEyoMs/pub?output=csv'; 
         // ==========================================
 
         let allListings = [];
@@ -92,19 +92,16 @@
 
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
-                
                 const obj = {};
                 let row = [];
                 let current = '';
                 let inQuote = false;
-                
                 for (let char of lines[i]) {
                     if (char === '"') { inQuote = !inQuote; } 
                     else if (char === ',' && !inQuote) { row.push(current.trim()); current = ''; } 
                     else { current += char; }
                 }
                 row.push(current.trim());
-
                 headers.forEach((header, index) => {
                     let val = row[index] || '';
                     val = val.replace(/^"|"$/g, '').replace(/""/g, '"');
@@ -187,7 +184,10 @@
                 let statusClass = 'status-sale';
                 if(item.status && (item.status.includes('임대') || item.status.includes('전세') || item.status.includes('월세'))) statusClass = 'status-rent';
                 if(item.status && item.status.includes('완료')) statusClass = 'status-done';
-                const imgUrl = convertDriveLink(item.images ? item.images.split('|')[0] : '');
+                
+                // [수정] 여기가 핵심입니다! images(복수)로 바꿨습니다.
+                const imgCol = item.images || item.image || ''; 
+                const imgUrl = convertDriveLink(imgCol.split('|')[0]);
 
                 const html = `
                     <div class="listing-card" onclick="location.href='detail.html?title=' + encodeURIComponent('${item.title}')">
