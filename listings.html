@@ -14,16 +14,21 @@
 
         header { background: white; padding: 15px 5%; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .logo img { height: 45px; }
-        .btn-box { display: flex; gap: 10px; align-items: center; }
         .btn-home { font-weight: 700; color: #555; font-size: 0.9rem; }
-        .btn-map-view { background: var(--chance-dark); color: white; padding: 8px 15px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; transition: 0.3s; }
-        .btn-map-view:hover { background: #1a252f; }
 
-        .search-section { background: var(--chance-dark); padding: 30px 5%; text-align: center; }
-        .search-box { max-width: 600px; margin: 0 auto; display: flex; background: white; border-radius: 50px; overflow: hidden; padding: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        /* 검색창 + 지도 버튼 영역 */
+        .search-section { background: var(--chance-dark); padding: 30px 5%; }
+        .search-wrapper { max-width: 800px; margin: 0 auto; display: flex; gap: 10px; align-items: center; }
+        
+        .search-box { flex: 1; display: flex; background: white; border-radius: 50px; overflow: hidden; padding: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .search-input { flex: 1; border: none; padding: 15px 20px; font-size: 1rem; outline: none; font-family: 'Noto Sans KR'; }
         .search-btn { background: var(--chance-blue); color: white; border: none; width: 50px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; transition: 0.3s; }
         .search-btn:hover { background: #1c6ea4; }
+
+        /* 우측 지도 버튼 (수정됨) */
+        .btn-map-circle { background: white; color: var(--chance-dark); width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.3s; border: 2px solid white; cursor: pointer; text-decoration: none; position: relative; }
+        .btn-map-circle:hover { background: var(--chance-blue); color: white; transform: translateY(-3px); }
+        .btn-map-text { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); color: white; font-size: 0.8rem; font-weight: 500; white-space: nowrap; }
 
         .filter-container { display: flex; justify-content: center; gap: 8px; padding: 20px 5%; flex-wrap: wrap; }
         .filter-btn { border: 1px solid #ddd; background: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 700; color: #666; font-size: 0.9rem; transition: 0.2s; }
@@ -54,15 +59,20 @@
     <header>
         <div class="logo"><a href="index.html"><img src="logo.jpg" alt="찬스부동산"></a></div>
         <div class="btn-box">
-            <a href="map.html" class="btn-map-view"><i class="fa-solid fa-map-location-dot"></i> 지도로 찾기</a>
             <a href="index.html" class="btn-home">홈으로</a>
         </div>
     </header>
 
     <div class="search-section">
-        <div class="search-box">
-            <input type="text" id="search-input" class="search-input" placeholder="동 이름, 아파트명, 특징을 검색해보세요">
-            <button class="search-btn" onclick="executeSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+        <div class="search-wrapper">
+            <div class="search-box">
+                <input type="text" id="search-input" class="search-input" placeholder="동 이름, 아파트명, 특징을 검색해보세요">
+                <button class="search-btn" onclick="executeSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            <a href="map.html" class="btn-map-circle" title="지도로 찾기">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <span class="btn-map-text">지도보기</span>
+            </a>
         </div>
     </div>
 
@@ -75,9 +85,9 @@
     </div>
 
     <script>
-        // [중요] 만약 시트 설정을 바꾸셨다면, 여기에 '새 링크'를 넣어주세요.
+        // [중요] 사장님 시트 주소 (혹시 안 되면 다시 발행해서 여기를 바꿔주세요!)
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgfWKmQ-Tjpm_mMdqKcgwvfVbCJZwl_HArZF3o6ZOjdR_1Xn3xvTlr1fwDw6EiDaaRo/pub?output=csv'; 
-        
+
         let allListings = [];
 
         function csvToJSON(csv) {
@@ -106,25 +116,33 @@
             return result;
         }
 
-        function convertDriveLink(link) {
-            if (!link) return 'bg.jpg';
-            if (link.includes('drive.google.com')) {
-                const idMatch = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
-                if (idMatch && idMatch[1]) return `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w1000`;
+        // [수정됨] 이미지 주소 찾기 기능을 강화함
+        function findFirstImage(imagesStr) {
+            if (!imagesStr) return 'bg.jpg';
+            // 쉼표나 파이프(|)로 구분된 것 중 'http'가 들어간 첫 번째 놈을 찾음
+            const candidates = imagesStr.split(/[|,]/); 
+            for (let link of candidates) {
+                link = link.trim();
+                if (link.startsWith('http')) return link; // 진짜 주소면 반환
+                if (link.includes('drive.google.com')) { // 구글 드라이브면 변환해서 반환
+                     const idMatch = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                     if (idMatch && idMatch[1]) return `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w1000`;
+                }
             }
-            return link; 
+            return 'bg.jpg'; // 못 찾으면 기본 이미지
         }
 
         fetch(sheetUrl + '&t=' + new Date().getTime())
             .then(response => response.text())
             .then(csvText => {
                 allListings = csvToJSON(csvText);
+                console.log("불러온 매물 개수:", allListings.length); // F12 눌러서 확인 가능
                 createCategoryButtons(allListings); 
                 renderListings(allListings);
             })
             .catch(error => {
                 console.error(error);
-                document.getElementById('listing-container').innerHTML = '<div class="loading-msg">데이터를 불러올 수 없습니다.</div>';
+                document.getElementById('listing-container').innerHTML = '<div class="loading-msg">데이터를 불러올 수 없습니다.<br>구글 시트 "웹에 게시"가 CSV로 잘 되었는지 확인해주세요.</div>';
             });
 
         function createCategoryButtons(items) {
@@ -178,10 +196,8 @@
                 if(item.status && (item.status.includes('임대') || item.status.includes('월세'))) statusClass = 'status-rent';
                 if(item.status && item.status.includes('완료')) statusClass = 'status-done';
                 
-                // 첫번째 사진만 썸네일로
-                const imgCol = item.images || item.image || ''; 
-                const firstImg = imgCol.split('|')[0].trim();
-                const imgUrl = convertDriveLink(firstImg);
+                // [수정됨] 이미지 처리 강화
+                const imgUrl = findFirstImage(item.images || item.image);
 
                 const html = `
                     <div class="listing-card" onclick="location.href='detail.html?title=' + encodeURIComponent('${item.title}')">
