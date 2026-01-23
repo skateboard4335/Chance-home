@@ -3,75 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>매물 상세 - 찬스부동산</title>
+    <title>매물 목록 - 찬스부동산</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Noto Sans KR', sans-serif; color: #333; line-height: 1.6; background-color: #f5f7fa; padding-bottom: 80px; }
+        body { font-family: 'Noto Sans KR', sans-serif; color: #333; background-color: #f5f7fa; padding-bottom: 50px; }
         a { text-decoration: none; color: inherit; }
-        header { background: white; padding: 15px 5%; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
+        :root { --chance-blue: #2980b9; --chance-dark: #2c3e50; }
+
+        header { background: white; padding: 15px 5%; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .logo img { height: 45px; }
-        .btn-back { font-weight: 700; color: #555; border: 1px solid #ddd; padding: 5px 12px; border-radius: 4px; background: white; }
-        .container { max-width: 800px; margin: 0 auto; background: white; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.03); }
-        .image-section { position: relative; background: #eee; height: 400px; overflow: hidden; }
-        .main-img { width: 100%; height: 100%; object-fit: cover; }
-        .img-badge { position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 4px; font-weight: 700; font-size: 0.8rem; }
-        .thumb-list { display: flex; gap: 8px; padding: 10px 20px; overflow-x: auto; background: white; border-bottom: 1px solid #f0f0f0; }
-        .thumb-item { width: 60px; height: 60px; border-radius: 4px; overflow: hidden; opacity: 0.5; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; }
-        .thumb-item.active { opacity: 1; border-color: #2980b9; }
-        .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
-        .basic-info { padding: 30px 20px; border-bottom: 8px solid #f5f7fa; }
-        .cat-tag { color: #2980b9; font-weight: 700; font-size: 0.9rem; margin-bottom: 5px; display: block; }
-        .price-text { font-size: 2rem; font-weight: 900; color: #222; margin-bottom: 10px; line-height: 1.2; }
-        .title-text { font-size: 1.3rem; font-weight: 500; color: #444; margin-bottom: 20px; }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f9f9f9; padding: 20px; border-radius: 12px; }
-        .info-item { display: flex; align-items: center; gap: 12px; }
-        .info-icon { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #777; border: 1px solid #eee; font-size: 1.1rem; flex-shrink: 0; }
-        .info-text div:first-child { font-size: 0.8rem; color: #888; margin-bottom: 2px; }
-        .info-text div:last-child { font-size: 0.95rem; font-weight: 700; color: #333; }
-        .section { padding: 30px 20px; border-bottom: 8px solid #f5f7fa; }
-        .sec-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 15px; color: #222; display: flex; align-items: center; gap: 8px; }
-        .desc-box { background: white; line-height: 1.8; color: #555; white-space: pre-wrap; font-size: 1.05rem; }
-        .map-box { background: #f8f9fa; border-radius: 12px; padding: 20px; text-align: center; border: 1px solid #eee; }
-        .address-text { font-weight: 700; font-size: 1.1rem; margin-bottom: 15px; display: block; }
-        .btn-map { background: #2c3e50; color: white; padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; }
-        .similar-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; }
-        .similar-card { min-width: 160px; width: 160px; border: 1px solid #eee; border-radius: 8px; overflow: hidden; cursor: pointer; }
-        .similar-img { height: 100px; background: #ddd; }
-        .similar-img img { width: 100%; height: 100%; object-fit: cover; }
-        .similar-info { padding: 10px; }
-        .similar-price { font-weight: 800; font-size: 0.95rem; color: #2980b9; margin-bottom: 3px; }
-        .similar-title { font-size: 0.85rem; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 10px 20px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); display: flex; gap: 10px; z-index: 2000; }
-        .btn-action { flex: 1; height: 50px; border-radius: 8px; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; }
-        .btn-call { background: #2980b9; color: white; }
-        .btn-blog { background: #03c75a; color: white; } 
-        .loading { text-align: center; padding: 100px; color: #999; }
+        .btn-box { display: flex; gap: 10px; align-items: center; }
+        .btn-home { font-weight: 700; color: #555; font-size: 0.9rem; }
+        .btn-map-view { background: var(--chance-dark); color: white; padding: 8px 15px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; transition: 0.3s; }
+        .btn-map-view:hover { background: #1a252f; }
+
+        .search-section { background: var(--chance-dark); padding: 30px 5%; text-align: center; }
+        .search-box { max-width: 600px; margin: 0 auto; display: flex; background: white; border-radius: 50px; overflow: hidden; padding: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .search-input { flex: 1; border: none; padding: 15px 20px; font-size: 1rem; outline: none; font-family: 'Noto Sans KR'; }
+        .search-btn { background: var(--chance-blue); color: white; border: none; width: 50px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; transition: 0.3s; }
+        .search-btn:hover { background: #1c6ea4; }
+
+        .filter-container { display: flex; justify-content: center; gap: 8px; padding: 20px 5%; flex-wrap: wrap; }
+        .filter-btn { border: 1px solid #ddd; background: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 700; color: #666; font-size: 0.9rem; transition: 0.2s; }
+        .filter-btn:hover, .filter-btn.active { background-color: var(--chance-blue); color: white; border-color: var(--chance-blue); }
+
+        .listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; padding: 10px 5%; max-width: 1200px; margin: 0 auto; }
+        .listing-card { background: white; border-radius: 12px; overflow: hidden; border: 1px solid #eee; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; }
+        .listing-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+        
+        .card-img-box { position: relative; width: 100%; padding-top: 65%; background: #eee; }
+        .card-img-box img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .card-badge { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.7); color: white; padding: 4px 10px; font-size: 0.8rem; border-radius: 4px; font-weight: 700; }
+        .card-status { position: absolute; top: 15px; right: 15px; padding: 4px 10px; font-size: 0.8rem; border-radius: 4px; font-weight: 700; background: #e74c3c; color: white; }
+        .status-rent { background: #f1c40f; color: #333; }
+        .status-done { background: #95a5a6; }
+
+        .card-content { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+        .card-price { font-size: 1.4rem; font-weight: 900; color: var(--chance-blue); margin-bottom: 5px; }
+        .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; color: #222; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-info { font-size: 0.9rem; color: #777; margin-bottom: 15px; display: flex; gap: 10px; }
+        .card-info span { display: flex; align-items: center; gap: 4px; }
+        .card-footer { margin-top: auto; padding-top: 15px; border-top: 1px solid #f9f9f9; display: flex; justify-content: space-between; font-size: 0.85rem; color: #999; }
+        
+        .loading-msg { text-align: center; grid-column: 1/-1; padding: 50px; color: #999; }
     </style>
 </head>
 <body>
     <header>
         <div class="logo"><a href="index.html"><img src="logo.jpg" alt="찬스부동산"></a></div>
-        <a href="listings.html" class="btn-back">목록으로</a>
+        <div class="btn-box">
+            <a href="map.html" class="btn-map-view"><i class="fa-solid fa-map-location-dot"></i> 지도로 찾기</a>
+            <a href="index.html" class="btn-home">홈으로</a>
+        </div>
     </header>
-    <div id="app" class="container">
-        <div class="loading">매물 정보를 불러오는 중입니다...</div>
+
+    <div class="search-section">
+        <div class="search-box">
+            <input type="text" id="search-input" class="search-input" placeholder="동 이름, 아파트명, 특징을 검색해보세요">
+            <button class="search-btn" onclick="executeSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
     </div>
+
+    <div class="filter-container" id="category-buttons">
+        <button class="filter-btn active" onclick="filterListings('all')">전체보기</button>
+    </div>
+
+    <div class="listings-grid" id="listing-container">
+        <div class="loading-msg">매물 정보를 불러오는 중입니다...</div>
+    </div>
+
     <script>
-        // [최종 수정] 여기도 진짜 주소 적용 완료 (대소문자 완벽 일치)
-        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgFWKmQ-Tjpm_mMDqKcgwvfVbCJZwI_HARzF3o6Z0jdR_1Xn3XvTIr1fwDw6EiDaaRo/pub?output=csv'; 
+        // [중요] 만약 시트 설정을 바꾸셨다면, 여기에 '새 링크'를 넣어주세요.
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgfWKmQ-Tjpm_mMdqKcgwvfVbCJZwl_HArZF3o6ZOjdR_1Xn3xvTlr1fwDw6EiDaaRo/pub?output=csv'; 
         
-        function fixUrl(url) {
-            if (!url) return '';
-            let fixed = url.trim();
-            if (!fixed.startsWith('http')) fixed = 'https://' + fixed;
-            return fixed;
-        }
-        function getParam(name) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
-        }
+        let allListings = [];
+
         function csvToJSON(csv) {
             const lines = csv.split("\n");
             const result = [];
@@ -97,6 +105,7 @@
             }
             return result;
         }
+
         function convertDriveLink(link) {
             if (!link) return 'bg.jpg';
             if (link.includes('drive.google.com')) {
@@ -105,93 +114,97 @@
             }
             return link; 
         }
-        function changeMainImage(url, element) {
-            document.getElementById('main-img').src = url;
-            document.querySelectorAll('.thumb-item').forEach(box => box.classList.remove('active'));
-            element.classList.add('active');
-        }
-        const targetTitle = getParam('title');
+
         fetch(sheetUrl + '&t=' + new Date().getTime())
             .then(response => response.text())
             .then(csvText => {
-                const allListings = csvToJSON(csvText);
-                const item = allListings.find(l => l.title === targetTitle);
-                renderDetail(item, allListings);
+                allListings = csvToJSON(csvText);
+                createCategoryButtons(allListings); 
+                renderListings(allListings);
             })
             .catch(error => {
                 console.error(error);
-                document.getElementById('app').innerHTML = '<div class="loading">정보를 불러올 수 없습니다.</div>';
+                document.getElementById('listing-container').innerHTML = '<div class="loading-msg">데이터를 불러올 수 없습니다.</div>';
             });
-        function renderDetail(item, allListings) {
-            if (!item) {
-                document.getElementById('app').innerHTML = '<div class="loading">존재하지 않는 매물입니다.</div>';
+
+        function createCategoryButtons(items) {
+            const categorySet = new Set();
+            items.forEach(item => { if(item.category) categorySet.add(item.category.trim()); });
+            const btnContainer = document.getElementById('category-buttons');
+            btnContainer.innerHTML = '<button class="filter-btn active" onclick="filterListings(\'all\', this)">전체보기</button>';
+            categorySet.forEach(cat => {
+                if(!cat) return;
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.innerText = cat;
+                btn.onclick = (e) => filterListings(cat, e.target);
+                btnContainer.appendChild(btn);
+            });
+        }
+
+        function executeSearch() {
+            const keyword = document.getElementById('search-input').value.toLowerCase();
+            const filtered = allListings.filter(item => {
+                const text = (item.title + item.description + item.address_short + item.category).toLowerCase();
+                return text.includes(keyword);
+            });
+            renderListings(filtered);
+        }
+        
+        document.getElementById('search-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') executeSearch();
+        });
+
+        function filterListings(category, btnElement) {
+            document.getElementById('search-input').value = ''; 
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+            else document.querySelector('.filter-btn').classList.add('active');
+
+            if (category === 'all') renderListings(allListings);
+            else renderListings(allListings.filter(item => item.category === category));
+        }
+
+        function renderListings(items) {
+            const container = document.getElementById('listing-container');
+            container.innerHTML = '';
+            if (items.length === 0) {
+                container.innerHTML = '<div class="loading-msg">조건에 맞는 매물이 없습니다.</div>';
                 return;
             }
-            const imgCol = item.images || item.image || '';
-            let imageList = imgCol ? imgCol.split('|').map(l=>convertDriveLink(l.trim())) : ['bg.jpg'];
-            let thumbsHtml = '';
-            imageList.forEach((url, idx) => {
-                thumbsHtml += `<div class="thumb-item ${idx===0?'active':''}" onclick="changeMainImage('${url}', this)"><img src="${url}"></div>`;
-            });
-            const blogUrl = fixUrl(item.blog_url);
-            const blogBtn = blogUrl ? `<a href="${blogUrl}" target="_blank" class="btn-action btn-blog"><i class="fa-solid fa-blog"></i> &nbsp;블로그 보기</a>` : '';
-            let similarItems = allListings.filter(l => l.category === item.category && l.title !== item.title);
-            const sameStatusItems = similarItems.filter(l => l.status === item.status);
-            const otherItems = similarItems.filter(l => l.status !== item.status);
-            similarItems = [...sameStatusItems, ...otherItems].slice(0, 5);
-            let similarHtml = '';
-            similarItems.forEach(sim => {
-                const simImgCol = sim.images || sim.image || '';
-                const simImgUrl = convertDriveLink(simImgCol.split('|')[0]);
-                similarHtml += `
-                    <div class="similar-card" onclick="location.href='detail.html?title=' + encodeURIComponent('${sim.title}')">
-                        <div class="similar-img"><img src="${simImgUrl}" onerror="this.src='bg.jpg'"></div>
-                        <div class="similar-info">
-                            <div class="similar-price">${sim.price}</div>
-                            <div class="similar-title">${sim.title}</div>
+            
+            items.forEach(item => {
+                let statusClass = 'status-sale';
+                if(item.status && (item.status.includes('임대') || item.status.includes('월세'))) statusClass = 'status-rent';
+                if(item.status && item.status.includes('완료')) statusClass = 'status-done';
+                
+                // 첫번째 사진만 썸네일로
+                const imgCol = item.images || item.image || ''; 
+                const firstImg = imgCol.split('|')[0].trim();
+                const imgUrl = convertDriveLink(firstImg);
+
+                const html = `
+                    <div class="listing-card" onclick="location.href='detail.html?title=' + encodeURIComponent('${item.title}')">
+                        <div class="card-img-box">
+                            <img src="${imgUrl}" alt="${item.title}" onerror="this.src='bg.jpg'">
+                            <span class="card-badge">${item.category || '매물'}</span>
+                            <span class="card-status ${statusClass}">${item.status || '상담'}</span>
                         </div>
-                    </div>
-                `;
+                        <div class="card-content">
+                            <div class="card-price">${item.price || '가격문의'}</div>
+                            <h3 class="card-title">${item.title}</h3>
+                            <div class="card-info">
+                                <span><i class="fa-solid fa-ruler-combined"></i> ${item.area_contract || '-'}</span>
+                                <span><i class="fa-regular fa-building"></i> ${item.floor_info || '-'}</span>
+                            </div>
+                            <div class="card-footer">
+                                <span><i class="fa-solid fa-location-dot"></i> ${item.address_short || '세종시'}</span>
+                                <span style="color:var(--chance-blue); font-weight:700;">상세보기 ></span>
+                            </div>
+                        </div>
+                    </div>`;
+                container.innerHTML += html;
             });
-            const mapQuery = item.info_loc ? item.info_loc : '세종특별자치시 찬스부동산';
-            const html = `
-                <div class="image-section">
-                    <span class="img-badge">${item.status}</span>
-                    <img id="main-img" src="${imageList[0]}" class="main-img" onerror="this.src='bg.jpg'">
-                </div>
-                ${imageList.length > 1 ? `<div class="thumb-list">${thumbsHtml}</div>` : ''}
-                <div class="basic-info">
-                    <span class="cat-tag">#${item.category}</span>
-                    <div class="price-text">${item.price}</div>
-                    <div class="title-text">${item.title}</div>
-                    <div class="info-grid">
-                        <div class="info-item"><div class="info-icon"><i class="fa-solid fa-ruler-combined"></i></div><div class="info-text"><div>면적</div><div>${item.info_area || '-'}</div></div></div>
-                        <div class="info-item"><div class="info-icon"><i class="fa-regular fa-building"></i></div><div class="info-text"><div>층수</div><div>${item.info_floor || '-'}</div></div></div>
-                        <div class="info-item"><div class="info-icon"><i class="fa-solid fa-truck-moving"></i></div><div class="info-text"><div>입주가능일</div><div>${item.info_movein || '즉시 협의'}</div></div></div>
-                        <div class="info-item"><div class="info-icon"><i class="fa-solid fa-square-parking"></i></div><div class="info-text"><div>주차</div><div>${item.info_parking || '-'}</div></div></div>
-                        <div class="info-item"><div class="info-icon"><i class="fa-regular fa-compass"></i></div><div class="info-text"><div>방향</div><div>${item.info_direction || '-'}</div></div></div>
-                        <div class="info-item"><div class="info-icon"><i class="fa-solid fa-elevator"></i></div><div class="info-text"><div>엘리베이터</div><div>${item.info_elevator || '-'}</div></div></div>
-                        <div class="info-item"><div class="info-icon"><i class="fa-solid fa-restroom"></i></div><div class="info-text"><div>화장실</div><div>${item.info_restroom || '-'}</div></div></div>
-                    </div>
-                </div>
-                <div class="section">
-                    <div class="sec-title"><i class="fa-solid fa-quote-left" style="color:#ddd;"></i> 중개사 코멘트</div>
-                    <div class="desc-box">${item.description}</div>
-                </div>
-                <div class="section">
-                    <div class="sec-title">위치 정보</div>
-                    <div class="map-box">
-                        <span class="address-text"><i class="fa-solid fa-location-dot" style="color:#e74c3c;"></i> ${item.info_loc || '세종특별자치시 (상세 주소 문의)'}</span>
-                        <a href="https://map.naver.com/v5/search/${encodeURIComponent(mapQuery)}" target="_blank" class="btn-map">네이버 지도로 보기 ></a>
-                    </div>
-                </div>
-                ${similarItems.length > 0 ? `<div class="section" style="border:none;"><div class="sec-title">고객님이 찾으시는 비슷한 조건의 매물</div><div class="similar-list">${similarHtml}</div></div>` : ''}
-                <div class="bottom-bar">
-                    <a href="tel:044-864-4953" class="btn-action btn-call"><i class="fa-solid fa-phone"></i> &nbsp;전화 문의</a>
-                    ${blogBtn}
-                </div>
-            `;
-            document.getElementById('app').innerHTML = html;
         }
     </script>
 </body>
