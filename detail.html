@@ -6,36 +6,47 @@
     <title>매물 상세 - 찬스부동산</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Noto Sans KR', sans-serif; color: #333; line-height: 1.6; background-color: #f5f7fa; padding-bottom: 80px; }
         a { text-decoration: none; color: inherit; }
+        
         header { background: white; padding: 15px 5%; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; }
         .logo img { height: 45px; }
         .btn-back { font-weight: 700; color: #555; border: 1px solid #ddd; padding: 5px 12px; border-radius: 4px; background: white; }
+
         .container { max-width: 800px; margin: 0 auto; background: white; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.03); }
+
         .image-section { position: relative; background: #eee; height: 400px; overflow: hidden; }
         .main-img { width: 100%; height: 100%; object-fit: cover; }
         .img-badge { position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.7); color: white; padding: 5px 10px; border-radius: 4px; font-weight: 700; font-size: 0.8rem; }
+        
         .thumb-list { display: flex; gap: 8px; padding: 10px 20px; overflow-x: auto; background: white; border-bottom: 1px solid #f0f0f0; }
         .thumb-item { width: 60px; height: 60px; border-radius: 4px; overflow: hidden; opacity: 0.5; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; }
         .thumb-item.active { opacity: 1; border-color: #2980b9; }
         .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
+
         .basic-info { padding: 30px 20px; border-bottom: 8px solid #f5f7fa; }
         .cat-tag { color: #2980b9; font-weight: 700; font-size: 0.9rem; margin-bottom: 5px; display: block; }
         .price-text { font-size: 2rem; font-weight: 900; color: #222; margin-bottom: 10px; line-height: 1.2; }
         .title-text { font-size: 1.3rem; font-weight: 500; color: #444; margin-bottom: 20px; }
+        
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f9f9f9; padding: 20px; border-radius: 12px; }
         .info-item { display: flex; align-items: center; gap: 12px; }
         .info-icon { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #777; border: 1px solid #eee; font-size: 1.1rem; flex-shrink: 0; }
         .info-text div:first-child { font-size: 0.8rem; color: #888; margin-bottom: 2px; }
         .info-text div:last-child { font-size: 0.95rem; font-weight: 700; color: #333; }
+
         .section { padding: 30px 20px; border-bottom: 8px solid #f5f7fa; }
         .sec-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 15px; color: #222; display: flex; align-items: center; gap: 8px; }
+        
         .desc-box { background: white; line-height: 1.8; color: #555; white-space: pre-wrap; font-size: 1.05rem; }
+        
         .map-box { background: #f8f9fa; border-radius: 12px; padding: 20px; text-align: center; border: 1px solid #eee; }
         .address-text { font-weight: 700; font-size: 1.1rem; margin-bottom: 15px; display: block; }
         .btn-map { background: #2c3e50; color: white; padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 8px; }
+
         .similar-list { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; }
         .similar-card { min-width: 160px; width: 160px; border: 1px solid #eee; border-radius: 8px; overflow: hidden; cursor: pointer; }
         .similar-img { height: 100px; background: #ddd; }
@@ -43,10 +54,12 @@
         .similar-info { padding: 10px; }
         .similar-price { font-weight: 800; font-size: 0.95rem; color: #2980b9; margin-bottom: 3px; }
         .similar-title { font-size: 0.85rem; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
         .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 10px 20px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); display: flex; gap: 10px; z-index: 2000; }
         .btn-action { flex: 1; height: 50px; border-radius: 8px; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; }
         .btn-call { background: #2980b9; color: white; }
         .btn-blog { background: #03c75a; color: white; } 
+        
         .loading { text-align: center; padding: 100px; color: #999; }
     </style>
 </head>
@@ -55,46 +68,50 @@
         <div class="logo"><a href="index.html"><img src="logo.jpg" alt="찬스부동산"></a></div>
         <a href="listings.html" class="btn-back">목록으로</a>
     </header>
+
     <div id="app" class="container">
         <div class="loading">매물 정보를 불러오는 중입니다...</div>
     </div>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNWJZWGNM"></script>
+
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-0WNWJZWGNM');
-    </script>
-    <script>
-        // [수정 완료] 여기도 진짜 주소로 바꿨습니다!
-        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgfWKmQ-Tjpm_mMdqKcgwvfVbCJZwl_HArZF3o6ZOjdR_1Xn3xvTlr1fwDw6EiDaaRo/pub?output=csv'; 
-        
+        // ==========================================
+        // [수정 완료] 새 시트 ID 적용
+        const sheetId = '1eowV-zcKf6EitkjY8WE5F3YvrES8ZKmXIGig_FEyoMs';
+        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/pub?output=csv`;
+        // ==========================================
+
         function fixUrl(url) {
             if (!url) return '';
             let fixed = url.trim();
             if (!fixed.startsWith('http')) fixed = 'https://' + fixed;
             return fixed;
         }
+
         function getParam(name) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(name);
         }
+
         function csvToJSON(csv) {
             const lines = csv.split("\n");
             const result = [];
             const headers = lines[0].split(",").map(h => h.trim());
+
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
+                
                 const obj = {};
                 let row = [];
                 let current = '';
                 let inQuote = false;
+                
                 for (let char of lines[i]) {
                     if (char === '"') { inQuote = !inQuote; } 
                     else if (char === ',' && !inQuote) { row.push(current.trim()); current = ''; } 
                     else { current += char; }
                 }
                 row.push(current.trim());
+
                 headers.forEach((header, index) => {
                     let val = row[index] || '';
                     val = val.replace(/^"|"$/g, '').replace(/""/g, '"');
@@ -104,6 +121,7 @@
             }
             return result;
         }
+
         function convertDriveLink(link) {
             if (!link) return 'bg.jpg';
             if (link.includes('drive.google.com')) {
@@ -112,14 +130,20 @@
             }
             return link; 
         }
+
         function changeMainImage(url, element) {
             document.getElementById('main-img').src = url;
             document.querySelectorAll('.thumb-item').forEach(box => box.classList.remove('active'));
             element.classList.add('active');
         }
+
         const targetTitle = getParam('title');
+
         fetch(sheetUrl + '&t=' + new Date().getTime())
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) throw new Error("네트워크 오류");
+                return response.text();
+            })
             .then(csvText => {
                 const allListings = csvToJSON(csvText);
                 const item = allListings.find(l => l.title === targetTitle);
@@ -129,23 +153,29 @@
                 console.error(error);
                 document.getElementById('app').innerHTML = '<div class="loading">정보를 불러올 수 없습니다.</div>';
             });
+
         function renderDetail(item, allListings) {
             if (!item) {
                 document.getElementById('app').innerHTML = '<div class="loading">존재하지 않는 매물입니다.</div>';
                 return;
             }
+
             const imgCol = item.images || item.image || '';
             let imageList = imgCol ? imgCol.split('|').map(l=>convertDriveLink(l.trim())) : ['bg.jpg'];
+            
             let thumbsHtml = '';
             imageList.forEach((url, idx) => {
                 thumbsHtml += `<div class="thumb-item ${idx===0?'active':''}" onclick="changeMainImage('${url}', this)"><img src="${url}"></div>`;
             });
+
             const blogUrl = fixUrl(item.blog_url);
             const blogBtn = blogUrl ? `<a href="${blogUrl}" target="_blank" class="btn-action btn-blog"><i class="fa-solid fa-blog"></i> &nbsp;블로그 보기</a>` : '';
+
             let similarItems = allListings.filter(l => l.category === item.category && l.title !== item.title);
             const sameStatusItems = similarItems.filter(l => l.status === item.status);
             const otherItems = similarItems.filter(l => l.status !== item.status);
             similarItems = [...sameStatusItems, ...otherItems].slice(0, 5);
+
             let similarHtml = '';
             similarItems.forEach(sim => {
                 const simImgCol = sim.images || sim.image || '';
@@ -160,44 +190,80 @@
                     </div>
                 `;
             });
+
             const mapQuery = item.info_loc ? item.info_loc : '세종특별자치시 찬스부동산';
+
             const html = `
                 <div class="image-section">
                     <span class="img-badge">${item.status}</span>
                     <img id="main-img" src="${imageList[0]}" class="main-img" onerror="this.src='bg.jpg'">
                 </div>
                 ${imageList.length > 1 ? `<div class="thumb-list">${thumbsHtml}</div>` : ''}
+
                 <div class="basic-info">
                     <span class="cat-tag">#${item.category}</span>
                     <div class="price-text">${item.price}</div>
                     <div class="title-text">${item.title}</div>
+
                     <div class="info-grid">
-                        <div class="info-item"><div class="info-icon"><i class="fa-solid fa-ruler-combined"></i></div><div class="info-text"><div>면적</div><div>${item.info_area || '-'}</div></div></div>
-                        <div class="info-item"><div class="info-icon"><i class="fa-regular fa-building"></i></div><div class="info-text"><div>층수</div><div>${item.info_floor || '-'}</div></div></div>
-                        <div class="info-item"><div class="info-icon"><i class="fa-solid fa-truck-moving"></i></div><div class="info-text"><div>입주가능일</div><div>${item.info_movein || '즉시 협의'}</div></div></div>
-                        <div class="info-item"><div class="info-icon"><i class="fa-solid fa-square-parking"></i></div><div class="info-text"><div>주차</div><div>${item.info_parking || '-'}</div></div></div>
-                        <div class="info-item"><div class="info-icon"><i class="fa-regular fa-compass"></i></div><div class="info-text"><div>방향</div><div>${item.info_direction || '-'}</div></div></div>
-                        <div class="info-item"><div class="info-icon"><i class="fa-solid fa-elevator"></i></div><div class="info-text"><div>엘리베이터</div><div>${item.info_elevator || '-'}</div></div></div>
-                        <div class="info-item"><div class="info-icon"><i class="fa-solid fa-restroom"></i></div><div class="info-text"><div>화장실</div><div>${item.info_restroom || '-'}</div></div></div>
+                        <div class="info-item">
+                            <div class="info-icon"><i class="fa-solid fa-ruler-combined"></i></div>
+                            <div class="info-text"><div>면적</div><div>${item.info_area || '-'}</div></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon"><i class="fa-regular fa-building"></i></div>
+                            <div class="info-text"><div>층수</div><div>${item.info_floor || '-'}</div></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon"><i class="fa-solid fa-truck-moving"></i></div>
+                            <div class="info-text"><div>입주가능일</div><div>${item.info_movein || '즉시 협의'}</div></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon"><i class="fa-solid fa-square-parking"></i></div>
+                            <div class="info-text"><div>주차</div><div>${item.info_parking || '-'}</div></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon"><i class="fa-regular fa-compass"></i></div>
+                            <div class="info-text"><div>방향</div><div>${item.info_direction || '-'}</div></div>
+                        </div>
+                         <div class="info-item">
+                            <div class="info-icon"><i class="fa-solid fa-elevator"></i></div>
+                            <div class="info-text"><div>엘리베이터</div><div>${item.info_elevator || '-'}</div></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon"><i class="fa-solid fa-restroom"></i></div>
+                            <div class="info-text"><div>화장실</div><div>${item.info_restroom || '-'}</div></div>
+                        </div>
                     </div>
                 </div>
+
                 <div class="section">
                     <div class="sec-title"><i class="fa-solid fa-quote-left" style="color:#ddd;"></i> 중개사 코멘트</div>
                     <div class="desc-box">${item.description}</div>
                 </div>
+
                 <div class="section">
                     <div class="sec-title">위치 정보</div>
                     <div class="map-box">
                         <span class="address-text"><i class="fa-solid fa-location-dot" style="color:#e74c3c;"></i> ${item.info_loc || '세종특별자치시 (상세 주소 문의)'}</span>
-                        <a href="https://map.naver.com/v5/search/${encodeURIComponent(mapQuery)}" target="_blank" class="btn-map">네이버 지도로 보기 ></a>
+                        <a href="https://map.naver.com/v5/search/${encodeURIComponent(mapQuery)}" target="_blank" class="btn-map">
+                            네이버 지도로 보기 >
+                        </a>
                     </div>
                 </div>
-                ${similarItems.length > 0 ? `<div class="section" style="border:none;"><div class="sec-title">고객님이 찾으시는 비슷한 조건의 매물</div><div class="similar-list">${similarHtml}</div></div>` : ''}
+
+                ${similarItems.length > 0 ? `
+                <div class="section" style="border:none;">
+                    <div class="sec-title">고객님이 찾으시는 비슷한 조건의 매물</div>
+                    <div class="similar-list">${similarHtml}</div>
+                </div>` : ''}
+
                 <div class="bottom-bar">
                     <a href="tel:044-864-4953" class="btn-action btn-call"><i class="fa-solid fa-phone"></i> &nbsp;전화 문의</a>
                     ${blogBtn}
                 </div>
             `;
+
             document.getElementById('app').innerHTML = html;
         }
     </script>
