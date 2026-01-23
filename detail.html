@@ -58,16 +58,9 @@
     <div id="app" class="container">
         <div class="loading">매물 정보를 불러오는 중입니다...</div>
     </div>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNWJZWGNM"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-0WNWJZWGNM');
-    </script>
-    <script>
-        // [수정 완료] 여기도 진짜 주소(2PACX...)로 교체 완료!
-        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgfWKmQ-Tjpm_mMdqKcgwvfVbCJZwl_HArZF3o6ZOjdR_1Xn3xvTlr1fwDw6EiDaaRo/pub?output=csv'; 
+        // [최종 수정] 여기도 진짜 주소 적용 완료 (대소문자 완벽 일치)
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgFWKmQ-Tjpm_mMDqKcgwvfVbCJZwI_HARzF3o6Z0jdR_1Xn3XvTIr1fwDw6EiDaaRo/pub?output=csv'; 
         
         function fixUrl(url) {
             if (!url) return '';

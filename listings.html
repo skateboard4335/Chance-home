@@ -57,17 +57,10 @@
     <div class="listings-grid" id="listing-container">
         <div class="loading-msg">매물 정보를 불러오는 중입니다...</div>
     </div>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNWJZWGNM"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-0WNWJZWGNM');
-    </script>
     <script>
         // ==========================================
-        // [긴급 수정] '웹에 게시' 창에 있던 진짜 주소(2PACX...)로 교체했습니다.
-        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgfWKmQ-Tjpm_mMdqKcgwvfVbCJZwl_HArZF3o6ZOjdR_1Xn3xvTlr1fwDw6EiDaaRo/pub?output=csv'; 
+        // [최종 수정] 사장님이 채팅창에 주신 그 주소 그대로 복사했습니다. (대소문자 완벽 일치)
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgFWKmQ-Tjpm_mMDqKcgwvfVbCJZwI_HARzF3o6Z0jdR_1Xn3XvTIr1fwDw6EiDaaRo/pub?output=csv'; 
         // ==========================================
         
         let allListings = [];
@@ -105,10 +98,7 @@
             return link; 
         }
         fetch(sheetUrl + '&t=' + new Date().getTime())
-            .then(response => {
-                if (!response.ok) throw new Error("네트워크 오류");
-                return response.text();
-            })
+            .then(response => response.text())
             .then(csvText => {
                 allListings = csvToJSON(csvText);
                 createCategoryButtons(allListings); 
@@ -117,7 +107,7 @@
             .catch(error => {
                 console.error(error);
                 document.getElementById('listing-container').innerHTML = 
-                    '<div class="loading-msg">데이터를 불러올 수 없습니다.<br>구글 시트 게시 설정이 올바른지 확인해주세요.</div>';
+                    '<div class="loading-msg">데이터를 불러올 수 없습니다.<br>구글 시트 주소가 정확한지 확인해주세요.</div>';
             });
         function createCategoryButtons(items) {
             const categorySet = new Set();
