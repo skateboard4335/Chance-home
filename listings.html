@@ -69,9 +69,17 @@
         <div class="loading-msg">매물 정보를 불러오는 중입니다...</div>
     </div>
 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WNWJZWGNM"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0WNWJZWGNM');
+    </script>
+
     <script>
         // ==========================================
-        // [수정 완료] 사장님의 '새 구글 시트' ID로 연결했습니다!
+        // [자동 연결] 사장님 시트 ID를 사용해 CSV 주소를 자동으로 만듭니다.
         const sheetId = '1eowV-zcKf6EitkjY8WE5F3YvrES8ZKmXIGig_FEyoMs';
         const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/pub?output=csv`;
         // ==========================================
@@ -130,7 +138,7 @@
             .catch(error => {
                 console.error(error);
                 document.getElementById('listing-container').innerHTML = 
-                    '<div class="loading-msg">데이터를 불러올 수 없습니다.<br>구글 시트에서 [파일 > 공유 > 웹에 게시]를 꼭 눌러주세요!</div>';
+                    '<div class="loading-msg">데이터를 불러올 수 없습니다.<br>구글 시트에서 <b>[파일 > 공유 > 웹에 게시]</b>를 눌렀는지 확인해주세요!</div>';
             });
 
         function createCategoryButtons(items) {
@@ -185,7 +193,6 @@
                 if(item.status && (item.status.includes('임대') || item.status.includes('전세') || item.status.includes('월세'))) statusClass = 'status-rent';
                 if(item.status && item.status.includes('완료')) statusClass = 'status-done';
                 
-                // image 또는 images 둘 다 처리
                 const imgCol = item.images || item.image || ''; 
                 const imgUrl = convertDriveLink(imgCol.split('|')[0]);
 
