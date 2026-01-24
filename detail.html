@@ -18,8 +18,35 @@
 
         .container { max-width: 800px; margin: 30px auto; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #eee; }
         
-        .img-container { width: 100%; height: 400px; background: #eee; position: relative; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; }
+        /* [갤러리 스타일 추가] 사진을 옆으로 넘기게 만듦 */
+        .gallery-wrapper { position: relative; background: #fff; border-bottom: 1px solid #eee; }
+        .img-container { 
+            display: flex; 
+            overflow-x: auto; 
+            scroll-snap-type: x mandatory; 
+            height: 450px; /* 사진 높이 */
+            scrollbar-width: none; /* 스크롤바 숨김 (파이어폭스) */
+        }
+        .img-container::-webkit-scrollbar { display: none; /* 스크롤바 숨김 (크롬) */ }
+        
+        .img-item { 
+            flex: 0 0 100%; /* 사진 하나가 꽉 차게 */
+            scroll-snap-align: start; 
+            position: relative; 
+            background: #fff;
+        }
+        .img-item img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; /* 사진 잘림 방지 (전체 다 보여줌) */
+        }
+
+        /* 사진 넘김 안내 화살표/문구 (옵션) */
+        .swipe-hint {
+            position: absolute; bottom: 15px; right: 20px;
+            background: rgba(0,0,0,0.6); color: white;
+            padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; pointer-events: none;
+        }
         
         .content { padding: 30px; }
         .category { display: inline-block; background: var(--chance-dark); color: white; padding: 5px 12px; border-radius: 5px; font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; }
@@ -81,18 +108,30 @@
             return result;
         }
 
-        function findFirstImage(imagesStr) {
-            if (!imagesStr) return 'bg.jpg';
-            const candidates = imagesStr.split(/[|,]/); 
-            for (let link of candidates) {
+        // [중요 수정] 사진을 '모두' 찾아내는 함수로 변경
+        function getAllImages(imagesStr) {
+            if (!imagesStr) return ['bg.jpg'];
+            
+            // 줄바꿈이나 콤마도 파이프(|)로 통일해서 자르기
+            const cleanStr = imagesStr.replace(/(\r\n|\n|\r)/gm, "|").replace(/,/g, "|");
+            const rawLinks = cleanStr.split("|");
+            
+            const validLinks = [];
+            for (let link of rawLinks) {
                 link = link.trim();
-                if (link.startsWith('http')) return link;
+                if (!link) continue;
+
+                // 구글 드라이브 링크 변환
                 if (link.includes('drive.google.com')) {
                      const idMatch = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
-                     if (idMatch && idMatch[1]) return `https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w1000`;
+                     if (idMatch && idMatch[1]) {
+                         validLinks.push(`https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w1000`);
+                     }
+                } else if (link.startsWith('http')) {
+                    validLinks.push(link);
                 }
             }
-            return 'bg.jpg';
+            return validLinks.length > 0 ? validLinks : ['bg.jpg'];
         }
 
         const targetTitle = getParam('title');
@@ -116,12 +155,27 @@
             });
 
         function renderDetail(item) {
-            const imgUrl = findFirstImage(item.images || item.image);
+            // [수정] 모든 이미지를 가져와서 HTML로 만듦
+            const images = getAllImages(item.images || item.image);
+            let imagesHtml = '';
+            
+            images.forEach((imgUrl, index) => {
+                imagesHtml += `
+                    <div class="img-item">
+                        <img src="${imgUrl}" alt="${item.title}" onerror="this.src='bg.jpg'" referrerpolicy="no-referrer">
+                    </div>`;
+            });
+
+            // 사진이 여러 장일 때만 '옆으로 넘기세요' 힌트 표시
+            const swipeHint = images.length > 1 ? `<div class="swipe-hint"><i class="fa-solid fa-hand-pointer"></i> 사진을 옆으로 넘겨보세요 (${images.length}장)</div>` : '';
             const blogLink = item.blog_url ? `<a href="${item.blog_url}" target="_blank" class="blog-btn"><i class="fa-solid fa-blog"></i> 네이버 블로그에서 더 자세히 보기</a>` : '';
 
             const html = `
-                <div class="img-container">
-                    <img src="${imgUrl}" alt="${item.title}" onerror="this.src='bg.jpg'">
+                <div class="gallery-wrapper">
+                    <div class="img-container">
+                        ${imagesHtml}
+                    </div>
+                    ${swipeHint}
                 </div>
                 <div class="content">
                     <span class="category">${item.category || '매물'}</span>
