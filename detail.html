@@ -84,7 +84,6 @@
     </div>
 
     <script>
-        // [수정] 진짜 주소 적용됨
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgFWKmQ-Tjpm_mMDqKcgwvfVbCJZwI_HARzF3o6Z0jdR_1Xn3XvTIr1fwDw6EiDaaRo/pub?gid=0&single=true&output=csv'; 
 
         function getParam(name) {
@@ -114,31 +113,43 @@
                     obj[header] = val;
                 });
                 
-                // 번호표(ID) 부여
                 obj.id = i - 1;
                 result.push(obj);
             }
             return result;
         }
 
+        // [최종 수정] 쉼표 분리 기능 제거 + 줄바꿈/파이프 지원 + 고화질 패치
         function getAllImages(imagesStr) {
             if (!imagesStr) return ['bg.jpg'];
-            const cleanStr = imagesStr.replace(/(\r\n|\n|\r)/gm, "|").replace(/,/g, "|");
+            
+            // 쉼표는 무시, 줄바꿈(엔터)만 | 로 바꿉니다.
+            const cleanStr = imagesStr.replace(/(\r\n|\n|\r)/gm, "|");
             const rawLinks = cleanStr.split("|");
             
             const validLinks = [];
             for (let link of rawLinks) {
                 link = link.trim();
                 if (!link) continue;
+
+                // 네이버 (초고화질)
                 if (link.includes('pstatic.net') || link.includes('blog.naver')) {
-                    link = link.split('?')[0]; 
+                    let mainUrl = link.split('?')[0]; 
+                    validLinks.push(mainUrl + '?type=w1920');
+                    continue;
                 }
+                
+                // 구글 드라이브 (초고화질)
                 if (link.includes('drive.google.com')) {
                      const idMatch = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
                      if (idMatch && idMatch[1]) {
-                         validLinks.push(`https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w2560`);
+                         validLinks.push(`https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=s2500`);
+                         continue;
                      }
-                } else if (link.startsWith('http')) {
+                } 
+                
+                // 그 외
+                if (link.startsWith('http')) {
                     validLinks.push(link);
                 }
             }
@@ -156,7 +167,6 @@
             .then(res => res.text())
             .then(text => {
                 const allListings = csvToJSON(text);
-                // ID로 매물 찾기
                 const item = allListings.find(i => i.id == targetId);
                 
                 if(item) renderDetail(item);
