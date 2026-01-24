@@ -83,6 +83,7 @@
     </div>
 
     <script>
+        // [수정] 정확한 구글 시트 주소
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgfWKmQ-Tjpm_mMdqKcgwvfVbCJZwl_HArZF3o6ZOjdR_1Xn3xvTlr1fwDw6EiDaaRo/pub?output=csv'; 
 
         let allListings = [];
@@ -109,7 +110,7 @@
                     obj[header] = val;
                 });
                 
-                // [핵심] 각 매물에 '번호표(ID)'를 붙여줍니다.
+                // [핵심] 각 매물에 '번호표(ID)'를 0번부터 순서대로 붙여줍니다.
                 obj.id = i - 1; 
                 
                 result.push(obj);
@@ -119,16 +120,12 @@
 
         function findFirstImage(imagesStr) {
             if (!imagesStr) return 'bg.jpg';
-            // 줄바꿈, 콤마 모두 파이프로 변환 후 분리
             const candidates = imagesStr.replace(/(\r\n|\n|\r)/gm, "|").replace(/,/g, "|").split("|"); 
             for (let link of candidates) {
                 link = link.trim();
-                
-                // [화질 개선 적용] 목록에서도 썸네일 꼬리표 제거
                 if (link.includes('pstatic.net') || link.includes('blog.naver')) {
                     link = link.split('?')[0]; 
                 }
-                
                 if (link.startsWith('http')) return link;
                 if (link.includes('drive.google.com')) {
                      const idMatch = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
@@ -203,7 +200,7 @@
                 
                 const imgUrl = findFirstImage(item.images || item.image);
 
-                // [핵심 변경] 클릭 시 'title=...' 대신 'id=숫자'를 넘깁니다.
+                // [핵심] 클릭 시 반드시 id를 전달합니다.
                 const html = `
                     <div class="listing-card" onclick="location.href='detail.html?id=${item.id}'">
                         <div class="card-img-box">

@@ -27,8 +27,8 @@
     <div class="loading" id="loading-msg">매물 정보를 불러오는 중입니다...</div>
 
     <script>
-        // [수정 완료] 새 구글 시트 주소
-        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgFWKmQ-Tjpm_mMDqKcgwvfVbCJZwI_HARzF3o6Z0jdR_1Xn3XvTIr1fwDw6EiDaaRo/pub?gid=0&single=true&output=csv'; 
+        // [수정] listings.html과 동일한 주소 사용 (데이터 일치)
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgfWKmQ-Tjpm_mMdqKcgwvfVbCJZwl_HArZF3o6ZOjdR_1Xn3xvTlr1fwDw6EiDaaRo/pub?output=csv'; 
 
         function csvToJSON(csv) {
             const lines = csv.split("\n");
@@ -51,16 +51,19 @@
                     val = val.replace(/^"|"$/g, '').replace(/""/g, '"');
                     obj[header] = val;
                 });
+                
+                // [핵심] 지도에서도 번호표(id)를 똑같이 생성합니다.
+                obj.id = i - 1;
+                
                 result.push(obj);
             }
             return result;
         }
 
         function initMap(listings) {
-            // 세종시청 부근 중심
             var map = new naver.maps.Map('map-container', {
-                center: new naver.maps.LatLng(36.4800, 127.2890), 
-                zoom: 13
+                center: new naver.maps.LatLng(36.5040736, 127.2494855), // 고운동 중심
+                zoom: 14
             });
 
             let loadedCount = 0;
@@ -72,6 +75,7 @@
             }
 
             validListings.forEach(item => {
+                // 주소로 좌표 변환
                 naver.maps.Service.geocode({ query: item.address }, function(status, response) {
                     loadedCount++;
                     if(loadedCount === validListings.length) {
@@ -81,7 +85,7 @@
                     if (status !== naver.maps.Service.Status.OK) return;
                     
                     var result = response.v2.addresses[0];
-                    if(!result) return; // 주소 결과가 없으면 패스
+                    if(!result) return; 
 
                     var coords = new naver.maps.LatLng(result.y, result.x);
                     
@@ -90,22 +94,23 @@
                         map: map,
                         title: item.title,
                         icon: {
-                            content: `<div style="background:white; padding:5px 10px; border:1px solid #333; border-radius:15px; font-weight:bold; font-size:0.8rem; box-shadow:0 2px 5px rgba(0,0,0,0.2); white-space:nowrap;">
+                            content: `<div style="background:white; padding:5px 10px; border:1px solid #333; border-radius:15px; font-weight:bold; font-size:0.8rem; box-shadow:0 2px 5px rgba(0,0,0,0.2); white-space:nowrap; color:#333;">
                                         ${item.price || '가격문의'}
                                       </div>`,
                             anchor: new naver.maps.Point(20, 20)
                         }
                     });
 
+                    // [핵심] 지도 마커 클릭 시에도 id를 사용하여 이동
                     naver.maps.Event.addListener(marker, 'click', function() {
-                        location.href = 'detail.html?title=' + encodeURIComponent(item.title);
+                        location.href = 'detail.html?id=' + item.id;
                     });
                 });
             });
         }
 
         if (typeof naver === 'undefined') {
-            alert("지도 로딩 실패: 네이버 클라우드 콘솔에서 'Web Service URL'에 현재 사이트 주소를 등록해주세요.");
+            alert("지도 로딩 실패: 네이버 클라우드 콘솔 설정을 확인하세요.");
         } else {
             fetch(sheetUrl + '&t=' + new Date().getTime())
                 .then(res => res.text())
@@ -115,7 +120,7 @@
                 })
                 .catch(err => {
                     console.error(err);
-                    alert("데이터 로딩 실패: 구글 시트 주소를 확인하세요.");
+                    alert("데이터 로딩 실패: 구글 시트 연결을 확인하세요.");
                 });
         }
     </script>
