@@ -18,9 +18,10 @@
 
         .container { max-width: 800px; margin: 30px auto; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #eee; }
         
-        .gallery-wrapper { position: relative; background: #fff; border-bottom: 1px solid #eee; }
+        /* [수정] 갤러리 배경을 검은색으로 변경 (사진 집중도 향상) */
+        .gallery-wrapper { position: relative; background: #000; border-bottom: 1px solid #eee; }
         
-        /* 사진 담는 틀: 높이 500px 고정 */
+        /* [수정] 사진 높이 500px 고정 */
         .img-container { 
             display: flex; 
             overflow-x: auto; 
@@ -31,23 +32,25 @@
         }
         .img-container::-webkit-scrollbar { display: none; }
         
-        /* 개별 사진 틀 */
         .img-item { 
             flex: 0 0 100%; 
             height: 100%;
             scroll-snap-align: start; 
             position: relative; 
-            background: #fff; 
             display: flex;
             justify-content: center; 
             align-items: center;     
         }
         
-        /* [핵심 수정] width, height를 100%로 강제 설정하여 작은 사진도 틀에 맞춰 늘림 */
+        /* [핵심 수정] 
+           1. width/height 100%: 작은 사진도 틀에 맞춰 커짐 
+           2. object-fit: contain: 사진 비율 유지하며 꽉 채움 (잘림 없음)
+        */
         .img-item img { 
             width: 100%;      
             height: 100%;     
-            object-fit: contain; /* 비율은 유지하되, 빈 공간 없이 최대한 크게 표시 */
+            object-fit: contain; 
+            display: block;
         }
 
         .swipe-hint {
@@ -55,6 +58,7 @@
             background: rgba(0,0,0,0.6); color: white;
             padding: 6px 15px; border-radius: 20px; font-size: 0.85rem; pointer-events: none;
             backdrop-filter: blur(5px);
+            z-index: 10;
         }
         
         .content { padding: 30px; }
@@ -128,15 +132,16 @@
                 link = link.trim();
                 if (!link) continue;
 
-                // [화질 개선 기능 유지]
+                // [강력한 화질 개선] ?type=... 부분을 정규식으로 확실하게 제거
                 if (link.includes('pstatic.net') || link.includes('blog.naver')) {
-                    link = link.split('?')[0]; 
+                    link = link.replace(/\?type=.*$/, ''); 
                 }
 
                 if (link.includes('drive.google.com')) {
                      const idMatch = link.match(/\/d\/([a-zA-Z0-9_-]+)/);
                      if (idMatch && idMatch[1]) {
-                         validLinks.push(`https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w1000`);
+                         // 구글 드라이브도 고화질 옵션(sz=w2000)으로 변경
+                         validLinks.push(`https://drive.google.com/thumbnail?id=${idMatch[1]}&sz=w2000`);
                      }
                 } else if (link.startsWith('http')) {
                     validLinks.push(link);
