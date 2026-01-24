@@ -84,8 +84,8 @@
     </div>
 
     <script>
-        // [수정] listings.html과 동일한 주소로 통일 (가장 중요)
-        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgfWKmQ-Tjpm_mMdqKcgwvfVbCJZwl_HArZF3o6ZOjdR_1Xn3xvTlr1fwDw6EiDaaRo/pub?output=csv'; 
+        // [수정] 진짜 주소 적용됨
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vReD8rkzPZ_5ZgFWKmQ-Tjpm_mMDqKcgwvfVbCJZwI_HARzF3o6Z0jdR_1Xn3XvTIr1fwDw6EiDaaRo/pub?gid=0&single=true&output=csv'; 
 
         function getParam(name) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -114,7 +114,7 @@
                     obj[header] = val;
                 });
                 
-                // [핵심] 목록 페이지와 똑같이 번호표(ID)를 붙입니다.
+                // 번호표(ID) 부여
                 obj.id = i - 1;
                 result.push(obj);
             }
@@ -145,12 +145,10 @@
             return validLinks.length > 0 ? validLinks : ['bg.jpg'];
         }
 
-        // [핵심] 번호표(id)를 확인합니다.
         const targetId = getParam('id');
 
-        // id가 없으면(null) 에러 처리
         if(targetId === null) {
-            alert("잘못된 접근입니다. (매물 번호가 없습니다)");
+            alert("잘못된 접근입니다.");
             location.href = 'listings.html';
         }
 
@@ -158,19 +156,17 @@
             .then(res => res.text())
             .then(text => {
                 const allListings = csvToJSON(text);
-                
-                // [핵심] 번호표(id)가 일치하는 매물을 찾습니다.
-                // targetId는 문자열이므로 == (느슨한 비교)를 사용합니다.
+                // ID로 매물 찾기
                 const item = allListings.find(i => i.id == targetId);
                 
                 if(item) renderDetail(item);
                 else {
-                    alert("해당 매물을 찾을 수 없습니다. (ID: " + targetId + ")");
+                    alert("해당 매물을 찾을 수 없습니다.");
                     location.href = 'listings.html';
                 }
             })
             .catch(err => {
-                alert("데이터 로딩 중 오류가 발생했습니다.");
+                alert("데이터 로딩 오류");
                 location.href = 'listings.html';
             });
 
